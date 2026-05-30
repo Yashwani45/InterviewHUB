@@ -1,0 +1,974 @@
+// import React from "react";
+// import { useNavigate } from "react-router-dom";
+// import { FaArrowLeft } from "react-icons/fa";
+// import { motion } from "motion/react";
+// import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+// import "react-circular-progressbar/dist/styles.css";
+// import jsPDF from "jspdf";
+// import autoTable from "jspdf-autotable";
+// import {
+//   AreaChart,
+//   Area,
+//   XAxis,
+//   YAxis,
+//   CartesianGrid,
+//   Tooltip,
+//   ResponsiveContainer,
+// } from "recharts";
+// function Step3Report({ report }) {
+//   if (!report) {
+//     return (
+//       <div className="min-h-screen flex items-center justify-center">
+//         <p className="text-gray-500 text-lg">Loading Report...</p>
+//       </div>
+//     );
+//   }
+   
+//   // console.log(report.userId?.toString?.slice(0,6))
+//   let userName = report?.userName
+  
+  
+  
+//   const {
+//     finalScore = 0,
+//     confidence = 0,
+//     communication = 0,
+//     correctness = 0,
+//     questionWiseScore = [],
+//   } = report;
+//   const { cheatCount = 0 } = report;
+
+//   const questionScoreData = questionWiseScore.map((score, index) => ({
+//     name: `Q${index + 1}`,
+//     score: score.score || 0,
+//   }));
+
+//   const skills = [
+//     { label: "Confidence", value: confidence },
+//     { label: "Communication", value: communication },
+//     { label: "Correctness", value: correctness },
+//   ];
+
+//   let performanceText = "";
+//   let shortTagline = "";
+
+//   if (finalScore >= 8) {
+//     performanceText = "Ready for job opportunities.";
+//     shortTagline = "Excellent clarity and structured responses.";
+//   } else if (finalScore >= 5) {
+//     performanceText = "Needs minor improvement before interviews.";
+//     shortTagline = "Good foundation, refine articulation.";
+//   } else {
+//     performanceText = "Significant improvement required.";
+//     shortTagline = "Work on clarity and confidence.";
+//   }
+
+//   const navigate = useNavigate();
+//   const score = finalScore;
+//   const percentage = (score / 10) * 100;
+
+
+// const downloadPDF = () => {
+//   if (report.status === "aborted") {
+//     const doc = new jsPDF();
+
+//     doc.setFont("helvetica", "bold");
+//     doc.setFontSize(22);
+//     doc.setTextColor(220, 38, 38);
+
+//     doc.text("Interview Aborted", 105, 60, { align: "center" });
+
+//     doc.setFontSize(12);
+//     doc.setTextColor(0, 0, 0);
+
+//     doc.text(
+//       "This interview was automatically terminated due to suspicious activity.",
+//       105,
+//       80,
+//       { align: "center", maxWidth: 150 }
+//     );
+
+//     doc.text(
+//       "No performance report is available.",
+//       105,
+//       95,
+//       { align: "center" }
+//     );
+
+//     doc.save(`${report.userName}_Aborted.pdf`);
+//     return;
+//   }
+
+//   const doc = new jsPDF();
+
+//   const pageWidth = doc.internal.pageSize.getWidth();
+//   const margin = 20;
+//   const contentWidth = pageWidth - margin * 2;
+
+//   let currentY = 25;
+
+//   doc.setFont("helvetica", "bold");
+//   doc.setFontSize(12);
+//   doc.setTextColor(220, 38, 38);
+
+//   doc.text(`Proctoring Alerts: ${cheatCount}`, margin + 10, currentY);
+//   currentY += 8;
+
+//   let proctorAdvice = "";
+
+//   if (cheatCount > 5) {
+//     proctorAdvice =
+//       "Frequent head movement detected. Maintain focus during interview.";
+//   } else {
+//     proctorAdvice = "Good focus maintained during interview.";
+//   }
+
+//   doc.setFont("helvetica", "normal");
+//   doc.setFontSize(11);
+//   doc.setTextColor(0, 0, 0);
+
+//   doc.text(proctorAdvice, margin + 10, currentY);
+//   currentY += 12;
+
+//   doc.setFont("helvetica", "bold");
+//   doc.setFontSize(20);
+//   doc.setTextColor(34, 197, 94);
+
+//   doc.text(
+//     "AI Interview Performance Report",
+//     pageWidth / 2,
+//     currentY,
+//     { align: "center" }
+//   );
+
+//   currentY += 5;
+
+//   doc.setDrawColor(34, 197, 94);
+//   doc.line(margin, currentY + 2, pageWidth - margin, currentY + 2);
+
+//   currentY += 15;
+
+//   doc.setFillColor(240, 253, 244);
+//   doc.roundedRect(margin, currentY, contentWidth, 20, 4, 4, "F");
+
+//   doc.setFontSize(14);
+//   doc.setTextColor(0, 0, 0);
+
+//   doc.text(
+//     `Final Score: ${finalScore}/10`,
+//     pageWidth / 2,
+//     currentY + 12,
+//     { align: "center" }
+//   );
+
+//   currentY += 30;
+
+  
+//   doc.setFillColor(249, 250, 251);
+//   doc.roundedRect(margin, currentY, contentWidth, 30, 4, 4, "F");
+
+//   doc.setFontSize(12);
+
+//   doc.text(`Confidence: ${confidence}`, margin + 10, currentY + 10);
+//   doc.text(`Communication: ${communication}`, margin + 10, currentY + 18);
+//   doc.text(`Correctness: ${correctness}`, margin + 10, currentY + 26);
+
+//   currentY += 45;
+
+  
+//   let advice = "";
+
+//   if (finalScore >= 8) {
+//     advice =
+//       "Excellent performance. Maintain confidence and structure. Continue refining clarity and supporting answers with strong real-world examples.";
+//   } else if (finalScore >= 5) {
+//     advice =
+//       "Good foundation shown. Improve clarity and structure. Practice delivering concise, confident answers with stronger supporting examples.";
+//   } else {
+//     advice =
+//       "Significant improvement required. Focus on structured thinking, clarity, and confident delivery. Practice answering aloud regularly.";
+//   }
+
+//   doc.setFillColor(255, 255, 255);
+//   doc.setDrawColor(220);
+//   doc.roundedRect(margin, currentY, contentWidth, 35, 4, 4);
+
+//   doc.setFont("helvetica", "bold");
+//   doc.text("Professional Advice", margin + 10, currentY + 10);
+
+//   doc.setFont("helvetica", "normal");
+//   doc.setFontSize(11);
+
+//   const splitAdvice = doc.splitTextToSize(advice, contentWidth - 20);
+//   doc.text(splitAdvice, margin + 10, currentY + 20);
+
+//   currentY += 50;
+
+  
+//   autoTable(doc, {
+//     startY: currentY,
+//     margin: { left: margin, right: margin },
+//     head: [["#", "Question", "Score", "Feedback"]],
+//     body: questionWiseScore.map((q, i) => [
+//       i + 1,
+//       q.question,
+//       `${q.score}/10`,
+//       q.feedback,
+//     ]),
+//     styles: {
+//       fontSize: 9,
+//       cellPadding: 5,
+//       valign: "top",
+//     },
+//     headStyles: {
+//       fillColor: [34, 197, 94],
+//       textColor: 255,
+//       halign: "center",
+//     },
+//     columnStyles: {
+//       0: { cellWidth: 10, halign: "center" },
+//       1: { cellWidth: 55 },
+//       2: { cellWidth: 20, halign: "center" },
+//       3: { cellWidth: "auto" },
+//     },
+//     alternateRowStyles: {
+//       fillColor: [249, 250, 251],
+//     },
+//   });
+  
+//   doc.save(`${userName}_Interview.pdf`);
+// };
+  
+// if (report.status === "aborted") {
+//   return (
+//     <div className="min-h-screen flex flex-col items-center justify-center">
+//       <h1 className="text-3xl font-bold text-red-600 mb-4">
+//         Interview Aborted
+//       </h1>
+//       <p className="text-gray-500">
+//         Tab switching or suspicious activity detected.
+//       </p>
+//     </div>
+//   );
+// }
+
+//   return (
+    
+//     <div className="min-h-screen bg-linear-to-br from-gray-50 to-green-50 px sm:px-6 lg:px-10 py-8">
+//       <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+//         <div className="md:mb-10 w-full flex items-start gap-4 flex-wrap">
+//           <button
+//             onClick={() => navigate("/history")}
+//             className="mt-1 p-3 rounded-full bg-white shadow hover:shadow-md transition"
+//           >
+//             <FaArrowLeft className="text-gray-600" />
+//           </button>
+
+//           <div>
+//             <h1 className="text-3xl font-bold  flex-nowrap text-gray-800">
+//               Analytics Dashboard
+//             </h1>
+//             <p className="text-gray-500 mt-2">
+//               AI Evaluated Perfomance Insights
+//             </p>
+//           </div>
+//         </div>
+//         <button  onClick={downloadPDF} className="bg-emerald-600 p-6 hover:bg-emerald-700 text-white py-3 rounded-xl shadow-md transition-all duration-300  text-sm sm:text-base text-nowrap">
+//           {"  Download  "}
+//         </button>
+//       </div>
+
+//       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+//         <div className="space-y-6">
+//           <motion.div
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             className="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-8 text-center"
+//           >
+//             <h3 className="text-gray-500 mb-4 sm:mb-6 text-sm sm:text-base">
+//               Overall Performance
+//             </h3>
+//             <div className=" relative w-20 h-20 sm:h-25 sm:w-25 mx-auto">
+//               <CircularProgressbar
+//                 value={percentage}
+//                 text={`${score}/10`}
+//                 strokeWidth={10}
+//                 styles={buildStyles({
+//                   strokeLinecap: "round",
+//                   pathTransitionDuration: 0.6,
+//                   pathColor: `rgb(16, 185, 129)`,
+//                   textColor: `#111827`,
+//                   trailColor: `#e5e7eb`,
+//                   textSize: "18px",
+//                 })}
+//               />
+//             </div>
+//             <div className="mt-4">
+//               <p className="font-semibold text-gray-800 text-sm sm:text-base">
+//                 {performanceText}
+//               </p>
+//               <p className="text-gray-500 text-xs sm:text-sm mt-1">
+//                 {shortTagline}
+//               </p>
+//             </div>
+//           </motion.div>
+
+//           <motion.div
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             className="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-6 sm:p-8"
+//           >
+//             <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-6">
+//               Skill Evaluation
+//             </h3>
+
+//             <div className="space-y-5">
+//               {skills.map((s, i) => (
+//                 <div key={i}>
+//                   <div className="flex justify-between mb-2 text-sm sm:text-base">
+//                     <span>{s.label}</span>
+//                     <span className="font-semibold text-green-600">
+//                       {s.value}
+//                     </span>
+//                   </div>
+
+                  
+//                   <div className="bg-gray-200 h-2 sm:h-3 rounded-full">
+//                     <div
+//                       className="bg-green-500 h-full rounded-full"
+//                       style={{ width: `${s.value * 10}%` }}
+//                     ></div>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </motion.div>
+//         </div>
+
+//         <div className="lg:col-span-2 space-y-6">
+//           <motion.div
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             className="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-5 sm:p-8"
+//           >
+//             <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-4 sm:mb-6">
+//               Performance Graph
+//             </h3>
+
+//             <div className="h-64 sm:h-72">
+//               <ResponsiveContainer width="100%" height="100%">
+//                 <AreaChart data={questionScoreData}>
+//                   <CartesianGrid strokeDasharray="3 3" />
+//                   <XAxis dataKey="name" />
+//                   <YAxis domain={[0, 10]} />
+//                   <Tooltip />
+//                   <Area
+//                     type="monotone"
+//                     dataKey="score"
+//                     stroke="#22c55e"
+//                     fill="#bbf7d0"
+//                     strokeWidth={3}
+//                   />
+//                 </AreaChart>
+//               </ResponsiveContainer>
+//             </div>
+//           </motion.div>
+//           <motion.div
+//             initial={{ opacity: 0 }}
+//             animate={{ opacity: 1 }}
+//             className="bg-white rounded-2xl sm:rounded-3xl shadow-lg p-5 sm:p-8"
+//           >
+//             <h3 className="text-base sm:text-lg font-semibold text-gray-700 mb-6">
+//               Question Breakdown
+//             </h3>
+
+//             <div className="space-y-6">
+//               {questionWiseScore.map((q, i) => (
+//                 <div
+//                   key={i}
+//                   className="bg-gray-50 p-4 sm:p-6 rounded-xl sm:rounded-2xl border border-gray-200"
+//                 >
+//                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3 mb-4">
+//                     <div>
+//                       <p className="text-xs text-gray-400">Question {i + 1}</p>
+
+//                       <p className="font-semibold text-gray-800 text-sm sm:text-base leading-relaxed">
+//                         {q.question || "Question not available"}
+//                       </p>
+//                     </div>
+
+//                     <div className="bg-green-100 text-green-600 px-3 py-1 rounded-full font-bold text-xs sm:text-sm w-fit">
+//                       {q.score ?? 0}/10
+//                     </div>
+//                   </div>
+//                   <div className="bg-green-50 border border-green-200 p-4 rounded-lg">
+//                     <p className="text-xs text-green-600 font-semibold mb-1">
+//                       AI Feedback
+//                     </p>
+
+//                     <p className="text-sm text-gray-700 leading-relaxed">
+//                       {q.feedback && q.feedback.trim() !== ""
+//                         ? q.feedback
+//                         : "No feedback available for this question."}
+//                     </p>
+//                   </div>
+//                 </div>
+//               ))}
+//             </div>
+//           </motion.div>
+//         </div>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export default Step3Report;
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { FaArrowLeft, FaDownload } from "react-icons/fa";
+import { motion } from "motion/react";
+import { HiSparkles, HiCheckCircle, HiExclamationTriangle } from "react-icons/hi2";
+import { CircularProgressbar, buildStyles } from "react-circular-progressbar";
+import "react-circular-progressbar/dist/styles.css";
+import jsPDF from "jspdf";
+import autoTable from "jspdf-autotable";
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+
+function Step3Report({ report }) {
+  if (!report) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex items-center justify-center">
+        <motion.div
+          animate={{ opacity: [0.5, 1, 0.5] }}
+          transition={{ duration: 2, repeat: Infinity }}
+          className="text-gray-400 text-lg flex items-center gap-2"
+        >
+          <div className="w-3 h-3 bg-blue-500 rounded-full animate-pulse" />
+          Generating Report...
+        </motion.div>
+      </div>
+    );
+  }
+
+  let userName = report?.userName;
+
+  const {
+    finalScore = 0,
+    confidence = 0,
+    communication = 0,
+    correctness = 0,
+    questionWiseScore = [],
+  } = report;
+  const { cheatCount = 0 } = report;
+
+  const questionScoreData = questionWiseScore.map((score, index) => ({
+    name: `Q${index + 1}`,
+    score: score.score || 0,
+  }));
+
+  const skills = [
+    { label: "Confidence", value: confidence, color: "from-blue-500 to-cyan-400" },
+    { label: "Communication", value: communication, color: "from-purple-500 to-pink-400" },
+    { label: "Correctness", value: correctness, color: "from-green-500 to-emerald-400" },
+  ];
+
+  let performanceText = "";
+  let shortTagline = "";
+  let performanceIcon = "";
+
+  if (finalScore >= 8) {
+    performanceText = "Ready for Job Opportunities";
+    shortTagline = "Excellent clarity and structured responses.";
+    performanceIcon = "";
+  } else if (finalScore >= 5) {
+    performanceText = "Minor Improvements Needed";
+    shortTagline = "Good foundation, refine articulation.";
+    performanceIcon = "";
+  } else {
+    performanceText = "Focus on Improvement";
+    shortTagline = "Work on clarity and confidence.";
+    performanceIcon = "";
+  }
+
+  const navigate = useNavigate();
+  const score = finalScore;
+  const percentage = (score / 10) * 100;
+
+  const downloadPDF = () => {
+    if (report.status === "aborted") {
+      const doc = new jsPDF();
+
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(22);
+      doc.setTextColor(220, 38, 38);
+
+      doc.text("Interview Aborted", 105, 60, { align: "center" });
+
+      doc.setFontSize(12);
+      doc.setTextColor(0, 0, 0);
+
+      doc.text(
+        "This interview was automatically terminated due to suspicious activity.",
+        105,
+        80,
+        { align: "center", maxWidth: 150 }
+      );
+
+      doc.text(
+        "No performance report is available.",
+        105,
+        95,
+        { align: "center" }
+      );
+
+      doc.save(`${report.userName}_Aborted.pdf`);
+      return;
+    }
+
+    const doc = new jsPDF();
+
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const margin = 20;
+    const contentWidth = pageWidth - margin * 2;
+
+    let currentY = 25;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(12);
+    doc.setTextColor(220, 38, 38);
+
+    doc.text(`Proctoring Alerts: ${cheatCount}`, margin + 10, currentY);
+    currentY += 8;
+
+    let proctorAdvice = "";
+
+    if (cheatCount > 5) {
+      proctorAdvice =
+        "Frequent head movement detected. Maintain focus during interview.";
+    } else {
+      proctorAdvice = "Good focus maintained during interview.";
+    }
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+    doc.setTextColor(0, 0, 0);
+
+    doc.text(proctorAdvice, margin + 10, currentY);
+    currentY += 12;
+
+    doc.setFont("helvetica", "bold");
+    doc.setFontSize(20);
+    doc.setTextColor(34, 197, 94);
+
+    doc.text(
+      "AI Interview Performance Report",
+      pageWidth / 2,
+      currentY,
+      { align: "center" }
+    );
+
+    currentY += 5;
+
+    doc.setDrawColor(34, 197, 94);
+    doc.line(margin, currentY + 2, pageWidth - margin, currentY + 2);
+
+    currentY += 15;
+
+    doc.setFillColor(240, 253, 244);
+    doc.roundedRect(margin, currentY, contentWidth, 20, 4, 4, "F");
+
+    doc.setFontSize(14);
+    doc.setTextColor(0, 0, 0);
+
+    doc.text(
+      `Final Score: ${finalScore}/10`,
+      pageWidth / 2,
+      currentY + 12,
+      { align: "center" }
+    );
+
+    currentY += 30;
+
+    doc.setFillColor(249, 250, 251);
+    doc.roundedRect(margin, currentY, contentWidth, 30, 4, 4, "F");
+
+    doc.setFontSize(12);
+
+    doc.text(`Confidence: ${confidence}`, margin + 10, currentY + 10);
+    doc.text(`Communication: ${communication}`, margin + 10, currentY + 18);
+    doc.text(`Correctness: ${correctness}`, margin + 10, currentY + 26);
+
+    currentY += 45;
+
+    let advice = "";
+
+    if (finalScore >= 8) {
+      advice =
+        "Excellent performance. Maintain confidence and structure. Continue refining clarity and supporting answers with strong real-world examples.";
+    } else if (finalScore >= 5) {
+      advice =
+        "Good foundation shown. Improve clarity and structure. Practice delivering concise, confident answers with stronger supporting examples.";
+    } else {
+      advice =
+        "Significant improvement required. Focus on structured thinking, clarity, and confident delivery. Practice answering aloud regularly.";
+    }
+
+    doc.setFillColor(255, 255, 255);
+    doc.setDrawColor(220);
+    doc.roundedRect(margin, currentY, contentWidth, 35, 4, 4);
+
+    doc.setFont("helvetica", "bold");
+    doc.text("Professional Advice", margin + 10, currentY + 10);
+
+    doc.setFont("helvetica", "normal");
+    doc.setFontSize(11);
+
+    const splitAdvice = doc.splitTextToSize(advice, contentWidth - 20);
+    doc.text(splitAdvice, margin + 10, currentY + 20);
+
+    currentY += 50;
+
+    autoTable(doc, {
+      startY: currentY,
+      margin: { left: margin, right: margin },
+      head: [["#", "Question", "Score", "Feedback"]],
+      body: questionWiseScore.map((q, i) => [
+        i + 1,
+        q.question,
+        `${q.score}/10`,
+        q.feedback,
+      ]),
+      styles: {
+        fontSize: 9,
+        cellPadding: 5,
+        valign: "top",
+      },
+      headStyles: {
+        fillColor: [34, 197, 94],
+        textColor: 255,
+        halign: "center",
+      },
+      columnStyles: {
+        0: { cellWidth: 10, halign: "center" },
+        1: { cellWidth: 55 },
+        2: { cellWidth: 20, halign: "center" },
+        3: { cellWidth: "auto" },
+      },
+      alternateRowStyles: {
+        fillColor: [249, 250, 251],
+      },
+    });
+
+    doc.save(`${userName}_Interview_Report.pdf`);
+  };
+
+  if (report.status === "aborted") {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 flex flex-col items-center justify-center p-4">
+        <motion.div
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="text-center space-y-4"
+        >
+          <HiExclamationTriangle className="text-red-400 text-6xl mx-auto" />
+          <h1 className="text-4xl font-bold text-red-400">Interview Aborted</h1>
+          <p className="text-gray-400 text-lg">
+            Tab switching or suspicious activity detected.
+          </p>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            onClick={() => navigate("/history")}
+            className="mt-6 bg-gradient-to-r from-blue-500 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold"
+          >
+            Back to History
+          </motion.button>
+        </motion.div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-black to-gray-900 px-4 sm:px-6 lg:px-8 py-8 relative overflow-hidden">
+      {/* Background Glow Effects */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/10 rounded-full blur-3xl" />
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-green-500/10 rounded-full blur-3xl" />
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto">
+        {/* Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -40 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="mb-12 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6"
+        >
+          <div className="flex items-start gap-4">
+            <motion.button
+              whileHover={{ scale: 1.1 }}
+              whileTap={{ scale: 0.9 }}
+              onClick={() => navigate("/history")}
+              className="p-3 rounded-full bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-md border border-gray-700/50 hover:border-blue-500/50 shadow-lg text-gray-300 hover:text-blue-400 transition-all"
+            >
+              <FaArrowLeft size={20} />
+            </motion.button>
+
+            <div>
+              <motion.h1
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.1 }}
+                className="text-4xl font-bold bg-gradient-to-r from-blue-400 via-white to-green-400 bg-clip-text text-transparent flex items-center gap-2"
+              >
+                
+                Performance Analytics
+              </motion.h1>
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+                className="text-gray-400 mt-2"
+              >
+                AI Evaluated Performance Insights & Detailed Breakdown
+              </motion.p>
+            </div>
+          </div>
+
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={downloadPDF}
+            className="bg-gradient-to-r from-blue-500 to-green-400 hover:from-blue-600 hover:to-green-500 text-white px-6 py-3 rounded-lg font-bold shadow-lg hover:shadow-blue-500/50 transition-all duration-300 flex items-center gap-2 w-full sm:w-auto justify-center"
+          >
+            <FaDownload size={18} />
+            Download Report
+          </motion.button>
+        </motion.div>
+
+        {/* Main Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 lg:gap-8">
+          {/* Left Column - Score & Skills */}
+          <motion.div
+            initial={{ x: -80, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="space-y-6"
+          >
+            {/* Overall Performance Circle */}
+            <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700/50 p-8">
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.3 }}
+              >
+                <p className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-6 text-center">
+                  Overall Performance
+                </p>
+
+                <div className="relative w-32 h-32 mx-auto mb-6">
+                  <motion.div
+                    initial={{ scale: 0 }}
+                    animate={{ scale: 1 }}
+                    transition={{ type: "spring", bounce: 0.5, delay: 0.4 }}
+                  >
+                    <CircularProgressbar
+                      value={percentage}
+                      text={`${score}/10`}
+                      strokeWidth={8}
+                      styles={buildStyles({
+                        strokeLinecap: "round",
+                        pathTransitionDuration: 0.8,
+                        pathColor: `url(#gradient)`,
+                        textColor: `#ffffff`,
+                        trailColor: `rgba(107, 114, 128, 0.2)`,
+                        textSize: "24px",
+                      })}
+                    />
+                    <svg style={{ height: 0 }}>
+                      <defs>
+                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                          <stop offset="0%" stopColor="#3b82f6" />
+                          <stop offset="100%" stopColor="#10b981" />
+                        </linearGradient>
+                      </defs>
+                    </svg>
+                  </motion.div>
+                </div>
+
+                <div className="text-center space-y-2">
+                  <p className="text-2xl font-bold text-white">
+                    {performanceIcon} {performanceText}
+                  </p>
+                  <p className="text-gray-400 text-sm leading-relaxed">
+                    {shortTagline}
+                  </p>
+                </div>
+              </motion.div>
+
+              {cheatCount > 0 && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                  className="mt-6 bg-red-500/10 border border-red-500/30 rounded-lg p-3 flex items-center gap-2"
+                >
+                  <HiExclamationTriangle className="text-red-400 flex-shrink-0" size={20} />
+                  <span className="text-sm text-red-300">
+                    <strong>{cheatCount}</strong> detection events
+                  </span>
+                </motion.div>
+              )}
+            </div>
+
+            {/* Skills Evaluation */}
+            <motion.div
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
+              className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700/50 p-8"
+            >
+              <h3 className="text-lg font-bold text-white mb-6 flex items-center gap-2">
+                <HiCheckCircle className="text-green-400" size={24} />
+                Skill Evaluation
+              </h3>
+
+              <div className="space-y-6">
+                {skills.map((s, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3 + i * 0.1 }}
+                  >
+                    <div className="flex justify-between items-center mb-3">
+                      <span className="text-gray-300 font-semibold">{s.label}</span>
+                      <span className={`font-bold bg-gradient-to-r ${s.color} bg-clip-text text-transparent`}>
+                        {s.value}/10
+                      </span>
+                    </div>
+
+                    <div className="h-3 bg-gray-700/50 rounded-full overflow-hidden border border-gray-600/50">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${s.value * 10}%` }}
+                        transition={{ duration: 0.8, delay: 0.4 + i * 0.1 }}
+                        className={`h-full bg-gradient-to-r ${s.color} rounded-full shadow-lg`}
+                      />
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right Column - Charts & Details */}
+          <motion.div
+            initial={{ x: 80, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ duration: 0.7, delay: 0.1 }}
+            className="lg:col-span-2 space-y-6"
+          >
+            {/* Performance Graph */}
+            <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700/50 p-8">
+              <h3 className="text-lg font-bold text-white mb-6">
+                Performance Trend
+              </h3>
+
+              <div className="h-80 -mx-4 px-4">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={questionScoreData}>
+                    <defs>
+                      <linearGradient id="colorScore" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.8} />
+                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(107, 114, 128, 0.2)" />
+                    <XAxis dataKey="name" stroke="rgba(156, 163, 175, 0.5)" />
+                    <YAxis domain={[0, 10]} stroke="rgba(156, 163, 175, 0.5)" />
+                    <Tooltip
+                      contentStyle={{
+                        background: "rgba(17, 24, 39, 0.9)",
+                        border: "1px solid rgba(59, 130, 246, 0.3)",
+                        borderRadius: "8px",
+                      }}
+                      labelStyle={{ color: "#fff" }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="score"
+                      stroke="#3b82f6"
+                      fillOpacity={1}
+                      fill="url(#colorScore)"
+                      strokeWidth={3}
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Question Breakdown */}
+            <div className="bg-gradient-to-br from-gray-800/60 to-gray-900/60 backdrop-blur-xl rounded-3xl shadow-2xl border border-gray-700/50 p-8">
+              <h3 className="text-lg font-bold text-white mb-6">
+                Question Breakdown
+              </h3>
+
+              <div className="space-y-5">
+                {questionWiseScore.map((q, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 20 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5, delay: i * 0.1 }}
+                    className="bg-gray-800/40 border border-gray-700/50 rounded-2xl overflow-hidden hover:border-blue-500/50 transition-all"
+                  >
+                    <div className="p-5 space-y-4">
+                      <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-3">
+                        <div className="flex-1">
+                          <p className="text-xs text-gray-500 uppercase tracking-wider mb-2">
+                            Question {i + 1}
+                          </p>
+                          <p className="text-base font-semibold text-white leading-relaxed">
+                            {q.question || "Question not available"}
+                          </p>
+                        </div>
+
+                        <motion.div
+                          whileHover={{ scale: 1.05 }}
+                          className="bg-gradient-to-r from-green-500/20 to-emerald-500/20 border border-green-500/40 text-green-300 px-4 py-2 rounded-lg font-bold text-sm whitespace-nowrap"
+                        >
+                          {q.score ?? 0}/10
+                        </motion.div>
+                      </div>
+
+                      <div className="bg-gradient-to-r from-blue-500/10 to-cyan-500/10 border border-blue-500/20 rounded-xl p-4">
+                        <p className="text-xs text-blue-300 font-bold uppercase tracking-wider mb-2">
+                          AI Feedback
+                        </p>
+                        <p className="text-sm text-gray-300 leading-relaxed">
+                          {q.feedback && q.feedback.trim() !== ""
+                            ? q.feedback
+                            : "No feedback available for this question."}
+                        </p>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
+            </div>
+          </motion.div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default Step3Report;

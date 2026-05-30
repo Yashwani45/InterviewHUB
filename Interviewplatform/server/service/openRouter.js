@@ -1,0 +1,47 @@
+import axios from "axios";
+
+export const askAi = async (messages) => {
+  try {
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      throw new Error("Message array is empty");
+    }
+
+const response = await axios.post(
+  "https://openrouter.ai/api/v1/chat/completions",
+ {
+  model: "openai/gpt-4.1-mini",
+  messages,
+  max_tokens: 500
+},
+  {
+    headers: {
+      Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
+      "Content-Type": "application/json",
+      "HTTP-Referer": "http://localhost:5173",
+      "X-Title": "InterviewHub"
+    }
+  }
+);
+
+    const content = response?.data?.choices?.[0]?.message?.content; 
+
+    if (!content || !content.trim()) {
+      throw new Error("Content is empty");
+    }
+
+    return content;
+
+  } catch (error) {
+    // console.error("open router error", error.response?.data || error.message);
+    // // console.log("API KEY:", process.env.OPENROUTER_API_KEY);
+    // throw new Error("Open Router Api Error");
+    // catch (error) {
+  console.log("========== OPENROUTER ERROR ==========");
+  console.log("Status:", error.response?.status);
+  console.log("Data:", error.response?.data);
+  console.log("Message:", error.message);
+
+  throw error;
+}
+  
+};
