@@ -13,7 +13,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:5173",
-  "https://interview-hub-3xgx.vercel.app"
+  "interview-hub-t85e.vercel.app"
 ];
 
 app.use(cors({
